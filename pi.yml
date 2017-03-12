@@ -1,0 +1,9 @@
+- hosts: pi
+  become: true
+  roles:
+    - role: common
+      tags:
+        - common
+    - role: Stouts.hostname
+      tags:
+        - common
