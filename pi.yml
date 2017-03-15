@@ -2,8 +2,8 @@
   become: true
   roles:
     - role: common
-      tags:
-        - common
+      tags: common
     - role: Stouts.hostname
-      tags:
-        - common
+      tags: common
+    - role: ola
+      tags: ola

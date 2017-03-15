@@ -1,0 +1,10 @@
+- name: Add OLA apt repo
+  apt_repository:
+    repo: deb   http://apt.openlighting.org/raspbian  wheezy main
+    state: absent
+    update_cache: yes
+
+- name: Install OLA
+  apt:
+    name: ola
+    state: present
