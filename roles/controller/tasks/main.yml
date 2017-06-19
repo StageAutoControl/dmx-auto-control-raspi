@@ -1,0 +1,36 @@
+- name: Install required dependencies (portmidi, portaudio)
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - libportmidi-dev
+    - portaudio19-dev
+
+- name: Create controller directory
+  file:
+    path: /etc/controller/bin
+    mode: 0755
+    state: directory
+    owner: root
+    group: root
+    recurse: true
+
+- name: Copy controller binary
+  copy:
+    dest: /etc/controller/bin/controller
+    force: true
+    mode: 0755
+    src: "{{ controller_binary }}"
+    owner: root
+    group: root
+
+- name: install controller systemd unit file
+  template:
+    src: controller.service
+    dest: /etc/systemd/system/controller.service
+
+- name: start controller
+  systemd:
+    state: started
+    name: controller
+    daemon_reload: yes

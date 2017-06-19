@@ -1,5 +1,22 @@
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: false
+  pre_tasks:
+    - name: Ensure that controller_binary is set, we need that for the controller service
+      fail: msg="Bailing out. Please specify the controller_binary."
+      when: controller_binary|default(None) == None or controller_binary == ""
+      tags:
+        - controller
+ 
+    - name: Ensure that definition_files is set, we need that for the controller service
+      fail: msg="Bailing out. Please specify the definition_files."
+      when: definition_files|default(None) == None or definition_files == ""
+      tags:
+        - definitions
+
 - hosts: pi
   become: true
+
   roles:
     - role: common
       tags:
@@ -7,3 +24,9 @@
     - role: Stouts.hostname
       tags:
         - common
+    - role: definitions
+      tags:
+        - definitions
+    - role: controller
+      tags:
+        - controller

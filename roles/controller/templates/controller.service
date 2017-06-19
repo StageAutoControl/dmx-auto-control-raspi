@@ -1,0 +1,11 @@
+[Unit]
+Description=StageAutoControl controller process
+Documentation=https://github.com/stageautocontrol/controller
+
+[Install]
+WantedBy=multi-user.target
+Alias=controller.service
+
+[Service]
+Type=simple
+ExecStart=/etc/controller/bin/controller 

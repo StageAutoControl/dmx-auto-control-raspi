@@ -1,0 +1,14 @@
+- name: Create definitions directory
+  file:
+    path: /var/controller
+    mode: 0755
+    state: directory
+    owner: root
+    group: root
+    recurse: true
+
+- name: Sync definition files
+  copy:
+    force: true
+    src: "{{ definition_files }}"
+    dest: /var/controller/defintions
