@@ -1,10 +1,20 @@
-- name: Install required dependencies (portmidi, portaudio)
+- name: Install required dependencies
   apt:
     name: "{{ item }}"
     update_cache: yes
   with_items:
     - libportmidi-dev
     - portaudio19-dev
+    - midisport-firmware
+  tags:
+  - controller-dep
+
+- name: install controller systemd unit file
+  template:
+    src: midisport-firmware.rules
+    dest: /etc/udev/rules.d/99-midisport-firmware.rules
+  tags:
+  - controller-dep
 
 - name: Create controller directory
   file:
@@ -14,23 +24,25 @@
     owner: root
     group: root
     recurse: true
+  tags:
+    - controller-binary
 
-- name: Copy controller binary
-  copy:
-    dest: /etc/controller/bin/controller
-    force: true
-    mode: 0755
-    src: "{{ controller_binary }}"
-    owner: root
-    group: root
+- name: Compile binary
+  include: compile.yml
+  tags:
+    - controller-binary
 
 - name: install controller systemd unit file
   template:
     src: controller.service
     dest: /etc/systemd/system/controller.service
+  tags:
+  - controller-systemd
 
 - name: start controller
   systemd:
     state: started
     name: controller
     daemon_reload: yes
+  tags:
+  - controller-systemd

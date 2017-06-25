@@ -1,16 +1,23 @@
 env ?= pi
-controller_binary ?= ../controller/bin/controller_arm
+controller_path ?= "$$(pwd)/../controller/"
 definition_files ?= "$${DEFINITION_FILES}"
 .PHONY: check apply
 
 install:
-	ansible-galaxy install -r requirements.yml -p roles-lib --force
+	ansible-galaxy install -r requirements.yml -p roles --force
 
 apply:
-	ansible-playbook pi.yml -i inventories/$(env).ini -e controller_binary=${controller_binary}
+	ansible-playbook pi.yml \
+		-i inventories/$(env).ini \
+		-e controller_path=${controller_path} \
+		-e definition_files=${definition_files}
 
 check:
-	ansible-playbook pi.yml -i inventories/$(env).ini -e controller_binary=${controller_binary} --check
+	ansible-playbook pi.yml \
+		-i inventories/$(env).ini \
+		-e controller_path=${controller_path} \
+		-e definition_files=${definition_files} \
+		--check
 
 ping:
 	ansible pi -i inventories/$(env).ini -m ping

@@ -1,0 +1,10 @@
+---
+# vars file for ansible-glide
+# glide-v0.12.3-linux-armv7.tar.gz
+
+package_version: v0.12.3
+package_os:      linux
+package_arch:    armv7
+package_name:    "glide-{{ package_version }}-{{ package_os }}-{{ package_arch }}"
+package_tgz:     "{{ package_name }}.tar.gz"
+package_download_url:  "https://github.com/Masterminds/glide/releases/download/{{ package_version }}/{{ package_tgz }}"
