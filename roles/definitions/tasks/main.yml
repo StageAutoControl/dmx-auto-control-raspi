@@ -10,7 +10,10 @@
 - name: Sync definition files
   synchronize:
     use_ssh_args: true
-    src: "{{ definition_files }}"
+    src: "{{ definition_files }}/"
     dest: /var/controller/defintions
     dirs: yes
     recursive: yes
+    delete: true
+    checksum: true
+    mode: push
