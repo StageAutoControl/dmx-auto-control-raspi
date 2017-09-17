@@ -34,6 +34,9 @@
     - role: common
       tags:
         - common
+    - role: audio
+      tags:
+        - audio
     - role: Stouts.hostname
       tags:
         - common

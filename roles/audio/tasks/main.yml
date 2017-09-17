@@ -1,0 +1,47 @@
+#
+# https://computers.tutsplus.com/articles/using-a-usb-audio-device-with-a-raspberry-pi--mac-55876
+#
+- name: Enable USB Audio interface
+  lineinfile:
+    path: /lib/modprobe.d/aliases.conf
+    state: present
+    regexp: 'options snd-usb-audio index=-2$'
+    line: 'options snd-usb-audio index=0\noptions snd_bcm2835 index=1'
+    backrefs: yes
+  notify:
+    - reboot
+    - wait-for-reboot
+
+#
+# https://www.raspberrypi.org/forums/viewtopic.php?t=136974
+#
+- name: Replace all specific routings for alsa
+  lineinfile:
+    path: /usr/share/alsa/alsa.conf
+    state: present
+    regexp: '^pcm.{{ item }} cards.pcm.\w+$'
+    line: 'pcm.{{ item }} cards.pcm.default'
+    backrefs: yes
+  with_items:
+    - default
+    - sysdefault
+    - front
+    - rear
+    - center_lfe
+    - side
+    - surround21
+    - surround40
+    - surround41
+    - surround50
+    - surround51
+    - surround71
+    - iec958
+    - spdif
+    - hdmi
+    - dmix
+    - dsnoop
+    - modem
+    - phoneline
+  notify:
+    - reboot
+    - wait-for-reboot

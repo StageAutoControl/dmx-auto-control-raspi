@@ -1,0 +1,13 @@
+- name: reboot
+  shell: sleep 2 && shutdown -r now 'Reboot required'
+  become: true
+  ignore_errors: true
+
+- name: wait-for-reboot
+  wait_for:
+      host={{ ansible_default_ipv4.address }}
+      port=22
+      delay=10
+      timeout=300
+  delegate_to: localhost
+  become: false
