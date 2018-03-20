@@ -1,21 +1,28 @@
 - name: Print the target dir
   debug:
     msg: "/var/controller/src/{{ controller_package }}"
+  tags:
+  - always
 
 - name: Print the source dir
   debug:
     msg: "{{ controller_path }}"
+  tags:
+  - always
 
 - name: Create GOPATH/src
   file:
     state: directory
     name: "/var/controller/src/{{ controller_package }}"
+  tags:
+  - build
+  - copy
 
 - name: Copy controller directory
   synchronize:
     use_ssh_args: true
     src: "{{ controller_path }}"
-    dest: "/var/controller/src/{{ controller_package }}/.."
+    dest: "/var/controller/src/{{ controller_package | dirname }}"
     dirs: yes
     recursive: yes
     delete: true
@@ -28,13 +35,20 @@
       - "--exclude=.vscode"
       - "--exclude=bin"
       - "--exclude=vendor"
+  tags:
+  - build
+  - copy
 
 - name: Install dependencies
   command: /opt/glide/linux-armv7/glide install --strip-vendor
   args:
     chdir: "/var/controller/src/{{ controller_package }}"
-  
+  tags:
+    - download
+
 - name: Build controller binary
   command: go build -o /etc/controller/bin/controller .
   args:
     chdir: "/var/controller/src/{{ controller_package }}"
+  tags:
+  - build

@@ -10,8 +10,6 @@
     state: "present"
     shell: "/bin/bash"
   with_items: '{{users}}'
-  notify:
-    - Restart ssh
 
 - name: Allow password-less sudo for each user
   lineinfile:
@@ -19,8 +17,6 @@
     state: 'present'
     line: '{{ item.name }} ALL=(ALL) NOPASSWD: ALL'
   with_items: '{{users}}'
-  notify:
-    - Restart ssh
 
 - name: Add SSH keys for each user
   authorized_key:
@@ -28,5 +24,3 @@
     key: "{{ item.key }}"
   with_items: '{{users}}'
   when: not ansible_check_mode
-  notify:
-    - Restart ssh

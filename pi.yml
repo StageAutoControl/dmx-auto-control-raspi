@@ -7,7 +7,8 @@
       when: controller_path|default(None) == None or controller_path == ""
       tags:
         - controller
-    
+        - always
+
     - debug:
         var: controller_path
 
@@ -16,6 +17,7 @@
       when: definition_files|default(None) == None or definition_files == ""
       tags:
         - definitions
+        - always
 
 - hosts: pi
   become: true
@@ -23,9 +25,9 @@
     PATH: "/opt/glide/linux-armv7:/usr/local/go/bin:{{ ansible_env.PATH }}"
     GOPATH: "/var/controller"
   vars:
-    go_tarball: go1.8.3.linux-armv6l.tar.gz
-    go_tarball_checksum: "sha256:3c30a3e24736ca776fc6314e5092fb8584bd3a4a2c2fa7307ae779ba2735e668"
-    go_version_target: "go version go1.8.3 linux/arm"
+    go_tarball: go1.10.linux-armv6l.tar.gz
+    go_tarball_checksum: "sha256:6ff665a9ab61240cf9f11a07e03e6819e452a618a32ea05bbb2c80182f838f4f"
+    go_version_target: "go version go1.10 linux/arm"
     package_arch: arm
     controller_path: "{{ controller_path }}"
     definition_files: "{{ definition_files }}"
@@ -34,9 +36,9 @@
     - role: common
       tags:
         - common
-    - role: audio
-      tags:
-        - audio
+    # - role: audio
+    #   tags:
+    #     - audio
     - role: Stouts.hostname
       tags:
         - common
@@ -52,6 +54,8 @@
     - role: definitions
       tags:
         - definitions
+        - offline
     - role: controller
       tags:
         - controller
+        - offline

@@ -1,5 +1,5 @@
 env ?= pi
-controller_path ?= "$$(pwd)/../controller/"
+controller_path ?= "$$(pwd)/../controller"
 definition_files ?= "$${DEFINITION_FILES}"
 .PHONY: check apply
 
@@ -11,6 +11,21 @@ apply:
 		-i inventories/$(env).ini \
 		-e controller_path=${controller_path} \
 		-e definition_files=${definition_files}
+
+apply-offline:
+	ansible-playbook pi.yml \
+		-i inventories/$(env).ini \
+		-e controller_path=${controller_path} \
+		-e definition_files=${definition_files} \
+		--tags offline \
+		--skip-tags download
+
+apply-definitions:
+	ansible-playbook pi.yml \
+		-i inventories/$(env).ini \
+		-e controller_path=${controller_path} \
+		-e definition_files=${definition_files} \
+		--tags definitions
 
 check:
 	ansible-playbook pi.yml \
@@ -27,5 +42,3 @@ list:
 
 dump:
 	ansible pi -i inventories/$(env).ini -m setup > /dev/null
-
-

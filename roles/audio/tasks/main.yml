@@ -12,7 +12,7 @@
     - reboot
     - wait-for-reboot
 
-#
+
 # https://www.raspberrypi.org/forums/viewtopic.php?t=136974
 #
 - name: Replace all specific routings for alsa

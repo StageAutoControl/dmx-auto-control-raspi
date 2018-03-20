@@ -1,4 +1,4 @@
-- include: users.yml
+- include_tasks: users.yml
   tags: user
-- include: packages.yml
+- include_tasks: packages.yml
   tags: packages

@@ -5,17 +5,17 @@
   with_items:
     - libportmidi-dev
     - portaudio19-dev
-    - midisport-firmware
-    - 
+    # - midisport-firmware
   tags:
   - controller-dep
-
-- name: install controller systemd unit file
-  template:
-    src: midisport-firmware.rules
-    dest: /etc/udev/rules.d/99-midisport-firmware.rules
-  tags:
-  - controller-dep
+  - download
+#
+# - name: install controller systemd unit file
+#   template:
+#     src: midisport-firmware.rules
+#     dest: /etc/udev/rules.d/99-midisport-firmware.rules
+#   tags:
+#   - controller-dep
 
 - name: Create controller directory
   file:
@@ -29,7 +29,7 @@
     - controller-binary
 
 - name: Compile binary
-  include: compile.yml
+  include_tasks: compile.yml
   tags:
     - controller-binary
 
