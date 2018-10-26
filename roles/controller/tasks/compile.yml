@@ -9,7 +9,7 @@
     msg: "{{ controller_path }}"
   tags:
   - always
-
+  
 - name: Create GOPATH/src
   file:
     state: directory

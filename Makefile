@@ -1,7 +1,8 @@
 env ?= pi
-controller_path ?= "$$(pwd)/../controller"
-definition_files ?= "$${DEFINITION_FILES}"
-.PHONY: check apply
+limit ?= $${LIMIT}
+controller_path ?= $$(pwd)/../controller
+definition_files ?= $${DEFINITION_FILES}
+.PHONY: all
 
 install:
 	ansible-galaxy install -r requirements.yml -p roles --force
@@ -9,12 +10,14 @@ install:
 apply:
 	ansible-playbook pi.yml \
 		-i inventories/$(env).ini \
+		--limit=${limit} \
 		-e controller_path=${controller_path} \
 		-e definition_files=${definition_files}
 
 apply-offline:
 	ansible-playbook pi.yml \
 		-i inventories/$(env).ini \
+		--limit="${limit}" \
 		-e controller_path=${controller_path} \
 		-e definition_files=${definition_files} \
 		--tags offline \
@@ -23,6 +26,7 @@ apply-offline:
 apply-definitions:
 	ansible-playbook pi.yml \
 		-i inventories/$(env).ini \
+		--limit="${limit},localhost" \
 		-e controller_path=${controller_path} \
 		-e definition_files=${definition_files} \
 		--tags definitions
@@ -30,6 +34,7 @@ apply-definitions:
 check:
 	ansible-playbook pi.yml \
 		-i inventories/$(env).ini \
+		--limit="${limit}" \
 		-e controller_path=${controller_path} \
 		-e definition_files=${definition_files} \
 		--check
