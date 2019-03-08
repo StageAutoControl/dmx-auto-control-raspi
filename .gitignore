@@ -1,6 +1,2 @@
-roles-lib
-password.txt
-.vagrant
 .ansible
-ansible.cfg
 *.retry

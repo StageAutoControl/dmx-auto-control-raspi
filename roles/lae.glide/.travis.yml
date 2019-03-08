@@ -1,0 +1,40 @@
+language: python
+sudo: required
+dist: trusty
+cache:
+  directories:
+  - "$HOME/lxc"
+  pip: true
+matrix:
+  fast_finish: true
+env:
+- ANSIBLE_GIT_VERSION='devel' # 2.6.x development branch
+- ANSIBLE_VERSION='<2.6.0' # 2.5.x
+- ANSIBLE_VERSION='<2.5.0' # 2.4.x
+- ANSIBLE_VERSION='<2.4.0' # 2.4.x
+install:
+- if [ "$ANSIBLE_GIT_VERSION" ]; then pip install "https://github.com/ansible/ansible/archive/${ANSIBLE_GIT_VERSION}.tar.gz";
+  elif [ "$ANSIBLE_VERSION" ]; then pip install "ansible${ANSIBLE_VERSION}";
+  else pip install ansible; fi
+- ansible --version
+# The following is needed for default Ansible 2.3 installations
+- 'sudo mkdir -p /etc/ansible/roles && sudo chown $(whoami): /etc/ansible/roles'
+- ansible-galaxy install lae.travis-lxc
+- ansible-playbook tests/install.yml -i tests/inventory
+- git archive --format tar.gz HEAD > lae.glide.tar.gz && ansible-galaxy install
+  lae.glide.tar.gz,$(git rev-parse HEAD),lae.glide && rm lae.glide.tar.gz
+before_script: cd tests/
+script:
+- ansible-playbook -i inventory deploy.yml --syntax-check
+- ansible-playbook -i inventory -v deploy.yml
+- 'ANSIBLE_STDOUT_CALLBACK=debug unbuffer ansible-playbook -i inventory -vv
+  deploy.yml > idempotency.log 2>&1 || (e=$?; cat idempotency.log; exit $e)'
+- 'grep -A1 "PLAY RECAP" idempotency.log | grep -qP "changed=0 .*failed=0 .*" &&
+  (echo "Idempotence: PASS"; exit 0) || (echo "Idempotence: FAIL"; exit 1)'
+- ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -i inventory -v test.yml
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  irc:
+    on_success: change
+    channels:
+      secure: XlmEbHk/WrUl/e2dm9jPe65OFW84MjsfzJLIpcuKQQ+xzBrfWPbxSN2N0gJh/pCzhLf9DWCbz8DJvbsRU87qpVJLYpnps8nQ2WZo0HhecVrKoeNonv7XTXN6JTKVmU+SZr35tlunntTZhpl+xc71GlL/lZBeKD/WLxHZgPan0gn4Fvr68/BqynsPbQb6Do4qCAN9KbUFE/pkv60DlCyTmFY92zQXD3SRfUp2sULAzt+CgM8m3+Of5onmLZDwNi8iXo4NPpZvBsSBS47PtuorIaMN0CWzzDPyi2An+ThlStqt2fHi5jvLDiVkVkHUTXuEc8u83US0Vh4XY619Xwr7Nz42rqh06VOs7QAamM35ST2w7BZyay5VX2j52NjwqJLXdb8cVOAHyPD+eaOLEenXNhmOjY2tnDHw5S1uESUclvU4+K2lqznMsHD4aVepJ9b/UP1t7dJ8Dpk+9q01dg/X+ngoGlPJStPq8ZRtWMiJRqWvIiD8dMa9gtBUXkW1jT9AwlR0QaioX2b2SXYyFag67Te5XZNu5B6rppJd51j/+2zWC+ZAlLxHSd7k0Q5kNIGJRlCVXdGXxhHEzgCXikTvfz8NKyAlISWGjouoDlFv4v6s2h+PaHnKajnJf72MiuWP3hGbfeFEXrxgInFCuLEOCmxXkOKTxsbbArCd1PP2ZkA=

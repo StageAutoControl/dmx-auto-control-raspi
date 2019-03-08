@@ -1,37 +1,5 @@
-- hosts: 127.0.0.1
-  connection: local
-  gather_facts: false
-  pre_tasks:
-    - name: Ensure that controller_path is set, we need that for the controller service
-      fail: msg="Bailing out. Please specify the controller_path."
-      when: controller_path|default(None) == None or controller_path == ""
-      tags:
-        - controller
-        - always
-
-    - debug:
-        var: controller_path
-
-    - name: Ensure that definition_files is set, we need that for the controller service
-      fail: msg="Bailing out. Please specify the definition_files."
-      when: definition_files|default(None) == None or definition_files == ""
-      tags:
-        - definitions
-        - always
-
 - hosts: pi
   become: true
-  environment:
-    PATH: "/opt/glide/linux-armv7:/usr/local/go/bin:{{ ansible_env.PATH }}"
-    GOPATH: "/var/controller"
-  vars:
-    go_tarball: go1.10.linux-armv6l.tar.gz
-    go_tarball_checksum: "sha256:6ff665a9ab61240cf9f11a07e03e6819e452a618a32ea05bbb2c80182f838f4f"
-    go_version_target: "go version go1.10 linux/arm"
-    package_arch: arm
-    controller_path: "{{ controller_path }}"
-    definition_files: "{{ definition_files }}"
-
   roles:
     - role: common
       tags:
@@ -44,18 +12,26 @@
         - common
 
     - role: joshualund.golang
+      vars:
+        # https://golang.org/dl/
+        go_tarball: go1.12.linux-armv6l.tar.gz
+        go_tarball_checksum: "sha256:ea0636f055763d309437461b5817452419411eb1f598dc7f35999fae05bcb79a"
+        go_version_target: "go version go1.12 linux/arm"
+        package_arch: arm
       tags:
         - golang
-    - role: kurtzhong.glide
+
+    - role: lae.glide
       tags:
         - golang
         - glide
 
-    - role: definitions
-      tags:
-        - definitions
-        - offline
     - role: controller
+      environment:
+        PATH: "/usr/local/go/bin:{{ ansible_env.PATH }}"
+        GOPATH: "/etc/controller"
+      vars:
+        controller_base_path: /etc/controller
       tags:
         - controller
         - offline

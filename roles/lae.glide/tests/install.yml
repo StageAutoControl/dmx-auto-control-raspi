@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  connection: local
+  roles:
+    - lae.travis-lxc
+  vars:
+    test_profiles:
+      - profile: debian-stretch
+      - profile: debian-jessie
+      - profile: centos-7
+      - profile: ubuntu-xenial
+      - profile: ubuntu-trusty

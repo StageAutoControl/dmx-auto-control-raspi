@@ -1,1 +1,3 @@
 controller_package: github.com/StageAutoControl/controller
+controller_base_path: /opt/controller
+controller_src_path: '{{ controller_base_path }}/src/{{ controller_package }}'

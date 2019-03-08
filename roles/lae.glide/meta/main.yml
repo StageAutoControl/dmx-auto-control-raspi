@@ -1,0 +1,26 @@
+galaxy_info:
+  author: Musee Ullah
+  description: Installs glide, a project-based package management tool for Go.
+  license: MIT
+  min_ansible_version: 2.3
+  platforms:
+    - name: Debian
+      versions:
+        - stretch
+        - jessie
+    - name: Ubuntu
+      versions:
+        - bionic
+        - xenial
+        - trusty
+    - name: EL
+      versions:
+        - 7
+    - name: Fedora
+      versions:
+        - 27
+        - 26
+        - 25
+  galaxy_tags:
+    - golang
+dependencies: []

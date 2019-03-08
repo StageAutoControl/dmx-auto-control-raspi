@@ -1,0 +1,5 @@
+---
+- hosts: all
+  tasks:
+    - name: Ensure glide is usable
+      command: glide --version

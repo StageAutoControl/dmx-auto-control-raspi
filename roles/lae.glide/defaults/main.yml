@@ -1,0 +1,13 @@
+---
+# defaults file for lae.glide
+glide_version: v0.13.1
+glide_url: "https://github.com/Masterminds/glide/releases/download/{{ glide_version }}/glide-{{ glide_version }}-linux-{{ glide_architecture[ansible_architecture] }}.tar.gz"
+glide_prefix: /usr
+
+# used for identifying correct package to download
+glide_architecture:
+  x86_64: amd64
+  i386: 386
+  armv5l: armv5
+  armv6l: armv6
+  armv7l: armv7

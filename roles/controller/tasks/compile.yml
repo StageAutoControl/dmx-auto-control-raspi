@@ -1,54 +1,53 @@
 - name: Print the target dir
   debug:
-    msg: "/var/controller/src/{{ controller_package }}"
+    msg: "{{ controller_src_path }}"
   tags:
   - always
 
-- name: Print the source dir
-  debug:
-    msg: "{{ controller_path }}"
-  tags:
-  - always
-  
-- name: Create GOPATH/src
+- name: Create src dir
   file:
     state: directory
-    name: "/var/controller/src/{{ controller_package }}"
+    name: "{{ controller_src_path | dirname }}"
   tags:
   - build
   - copy
+#
+# - name: Copy controller directory
+#   synchronize:
+#     use_ssh_args: true
+#     src: "{{ controller_path }}"
+#     dest: "{{ controller_base_path }}/src/{{ controller_package | dirname }}"
+#     dirs: yes
+#     recursive: yes
+#     delete: true
+#     checksum: true
+#     mode: push
+#     rsync_opts:
+#       - "--exclude=.git"
+#       - "--exclude=.glide"
+#       - "--exclude=.idea"
+#       - "--exclude=.vscode"
+#       - "--exclude=bin"
+#       - "--exclude=vendor"
+#   tags:
+#   - build
+#   - copy
 
-- name: Copy controller directory
-  synchronize:
-    use_ssh_args: true
-    src: "{{ controller_path }}"
-    dest: "/var/controller/src/{{ controller_package | dirname }}"
-    dirs: yes
-    recursive: yes
-    delete: true
-    checksum: true
-    mode: push
-    rsync_opts:
-      - "--exclude=.git"
-      - "--exclude=.glide"
-      - "--exclude=.idea"
-      - "--exclude=.vscode"
-      - "--exclude=bin"
-      - "--exclude=vendor"
-  tags:
-  - build
-  - copy
+# Example checkout a github repo and use refspec to fetch all pull requests
+- git:
+    repo: https://{{ controller_package }}.git
+    dest: "{{ controller_src_path }}"
 
 - name: Install dependencies
-  command: /opt/glide/linux-armv7/glide install --strip-vendor
+  command: glide install --strip-vendor
   args:
-    chdir: "/var/controller/src/{{ controller_package }}"
+    chdir: "{{ controller_src_path }}"
   tags:
     - download
 
 - name: Build controller binary
   command: go build -o /etc/controller/bin/controller .
   args:
-    chdir: "/var/controller/src/{{ controller_package }}"
+    chdir: "{{ controller_src_path }}"
   tags:
   - build

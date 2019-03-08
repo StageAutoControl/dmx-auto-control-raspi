@@ -1,0 +1,50 @@
+---
+# tasks file for lae.glide
+- name: Create documentation directories for Glide
+  file:
+    path: "{{ glide_prefix }}/{{ item }}"
+    state: directory
+  with_items:
+    - share/doc/glide
+    - share/licenses/glide
+
+- name: Identify currently installed Glide version if it exists
+  shell: "[ -f {{ __binary }} ] && ({{ __binary }} --version | awk '{print $NF}') || true"
+  changed_when: False
+  register: __glide_installed_version
+  vars:
+    __binary: "{{ glide_prefix }}/bin/glide"
+
+- block:
+  - name: Create a temporary extraction directory for Glide
+    tempfile:
+      state: directory
+    register: __glide_tmp
+
+  - name: Download the Glide release tarball
+    get_url:
+      url: "{{ glide_url }}"
+      dest: "{{ __glide_tmp.path }}"
+    register: __glide_download
+
+  - name: Extract The Glide release tarball
+    unarchive:
+      src: "{{ __glide_download.dest }}"
+      dest: "{{ __glide_tmp.path }}"
+      remote_src: True
+
+  - name: Install Glide and other extracted files
+    copy:
+      src: "{{ __glide_tmp.path }}/linux-{{ glide_architecture[ansible_architecture] }}/{{ item.src }}"
+      dest: "{{ item.dest }}/{{ item.src }}"
+      mode: 0755
+      remote_src: True
+    with_items:
+      - src: glide
+        dest: "{{ glide_prefix }}/bin"
+      - src: README.md
+        dest: "{{ glide_prefix }}/share/doc/glide"
+      - src: LICENSE
+        dest: "{{ glide_prefix }}/share/licenses/glide"
+
+  when: __glide_installed_version.stdout != glide_version
