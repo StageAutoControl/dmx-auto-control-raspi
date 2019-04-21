@@ -1,0 +1,2 @@
+storage_package: github.com/OneMoreWord/sac-data
+storage_path: "/var/controller/storage"

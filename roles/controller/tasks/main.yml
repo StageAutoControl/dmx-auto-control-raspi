@@ -7,7 +7,7 @@
     - portaudio19-dev
     # - midisport-firmware
   tags:
-  - controller-dep
+  - controller
   - download
 
 # - name: install controller systemd unit file
@@ -15,7 +15,7 @@
 #     src: midisport-firmware.rules
 #     dest: /etc/udev/rules.d/99-midisport-firmware.rules
 #   tags:
-#   - controller-dep
+#   - controller
 
 - name: Create controller directory
   file:
@@ -26,7 +26,7 @@
     group: root
     recurse: true
   tags:
-    - controller-binary
+    - controller
 
 - name: Create storage directory
   file:
@@ -37,24 +37,54 @@
     group: root
     recurse: true
   tags:
-    - controller-storage
+    - controller
 
-- name: Compile binary
-  include_tasks: compile.yml
+- name: Create src dir
+  file:
+    state: directory
+    name: "{{ controller_src_path | dirname }}"
   tags:
-    - controller-binary
+  - controller
+
+# Example checkout a github repo and use refspec to fetch all pull requests
+- git:
+    repo: https://{{ controller_package }}.git
+    dest: "{{ controller_src_path }}"
+  register: controller_git
+  tags:
+    - controller
+
+- name: Install dependencies
+  command: glide install --strip-vendor
+  args:
+    chdir: "{{ controller_src_path }}"
+  when: controller_git.changed
+  tags:
+    - controller
+
+- name: Build controller binary
+  command: go build -o /etc/controller/bin/controller .
+  args:
+    chdir: "{{ controller_src_path }}"
+  when: controller_git.changed
+  notify: controller_restart
+  tags:
+    - controller
 
 - name: install controller systemd unit file
   template:
     src: controller.service
     dest: /etc/systemd/system/controller.service
+  when: controller_git.changed
+  notify: controller_restart
   tags:
-  - controller-systemd
+    - controller
 
 - name: start controller
   systemd:
     state: started
     name: controller
     daemon_reload: yes
+  when: controller_git.changed
   tags:
-  - controller-systemd
+    - controller

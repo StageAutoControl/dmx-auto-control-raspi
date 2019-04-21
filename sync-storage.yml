@@ -1,0 +1,14 @@
+- hosts: stage-auto-control
+  become: true
+  tasks:
+    - name: Copy local storage files to servers
+      # synchronize:
+      #   src:
+      #   dest: /var/controller/storage
+      #   recursive: true
+      copy:
+        src: ../../sac-data/storage
+        dest: /var/controller/storage
+        owner: root
+        group: root
+        mode: 0644

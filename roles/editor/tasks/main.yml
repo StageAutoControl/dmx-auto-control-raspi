@@ -1,9 +1,3 @@
-- name: Print the target dir
-  debug:
-    msg: "{{ editor_src_path }}"
-  tags:
-  - always
-
 - name: Create src dir base
   file:
     state: directory

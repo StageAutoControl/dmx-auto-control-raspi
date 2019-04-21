@@ -26,6 +26,10 @@
         - golang
         - glide
 
+    - role: storage
+      tags:
+        - storage
+
     - role: controller
       environment:
         PATH: "/usr/local/go/bin:{{ ansible_env.PATH }}"

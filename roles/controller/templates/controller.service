@@ -8,4 +8,4 @@ Alias=controller.service
 
 [Service]
 Type=simple
-ExecStart=/etc/controller/bin/controller server -s /var/controller/storage
+ExecStart={{ controller_base_path }}/bin/controller server -s {{ storage_path }}

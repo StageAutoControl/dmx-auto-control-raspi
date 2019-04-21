@@ -1,0 +1,5 @@
+- name: controller_restart
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: controller
