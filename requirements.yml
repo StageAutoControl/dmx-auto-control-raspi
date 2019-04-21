@@ -1,3 +1,5 @@
 - src: Stouts.hostname
-- src: gantsign.golang
+- src: joshualund.golang
 - src: lae.glide
+- src: geerlingguy.nginx
+- src: geerlingguy.nodejs

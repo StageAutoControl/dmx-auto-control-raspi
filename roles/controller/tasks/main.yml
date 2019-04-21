@@ -28,6 +28,17 @@
   tags:
     - controller-binary
 
+- name: Create storage directory
+  file:
+    path: /var/controller/storage
+    mode: 0755
+    state: directory
+    owner: root
+    group: root
+    recurse: true
+  tags:
+    - controller-storage
+
 - name: Compile binary
   include_tasks: compile.yml
   tags:

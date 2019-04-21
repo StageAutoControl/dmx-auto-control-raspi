@@ -11,27 +11,6 @@
   tags:
   - build
   - copy
-#
-# - name: Copy controller directory
-#   synchronize:
-#     use_ssh_args: true
-#     src: "{{ controller_path }}"
-#     dest: "{{ controller_base_path }}/src/{{ controller_package | dirname }}"
-#     dirs: yes
-#     recursive: yes
-#     delete: true
-#     checksum: true
-#     mode: push
-#     rsync_opts:
-#       - "--exclude=.git"
-#       - "--exclude=.glide"
-#       - "--exclude=.idea"
-#       - "--exclude=.vscode"
-#       - "--exclude=bin"
-#       - "--exclude=vendor"
-#   tags:
-#   - build
-#   - copy
 
 # Example checkout a github repo and use refspec to fetch all pull requests
 - git:

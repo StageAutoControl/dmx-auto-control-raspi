@@ -1,0 +1,52 @@
+- name: Print the target dir
+  debug:
+    msg: "{{ editor_src_path }}"
+  tags:
+  - always
+
+- name: Create src dir base
+  file:
+    state: directory
+    name: "{{ editor_src_path | dirname }}"
+  tags:
+  - build
+  - copy
+
+# Example checkout a github repo and use refspec to fetch all pull requests
+- git:
+    repo: https://{{ editor_package }}.git
+    dest: "{{ editor_src_path }}"
+  register: editor_git
+  tags:
+    - download
+
+- name: Install dependencies
+  command: npm install
+  args:
+    chdir: "{{ editor_src_path }}"
+  tags:
+    - download
+  when: editor_git.changed
+
+- name: Build editor dist
+  environment:
+    PATH: "{{editor_src_path }}/node_modules/.bin:{{ ansible_env.PATH }}"
+  command: ng build --prod
+  args:
+    chdir: "{{ editor_src_path }}"
+  tags:
+  - build
+  when: editor_git.changed
+
+- name: create target dir
+  file:
+    state: directory
+    name: "{{ editor_target_path }}"
+  when: editor_git.changed
+
+- name: copy dist to target dir
+  synchronize:
+    src: "{{ editor_src_path }}/dist/editor/"
+    dest: "{{ editor_target_path }}"
+  delegate_to: "{{ inventory_hostname }}"
+  when: editor_git.changed

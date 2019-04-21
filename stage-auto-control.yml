@@ -1,4 +1,4 @@
-- hosts: pi
+- hosts: stage-auto-control
   become: true
   roles:
     - role: common
@@ -30,8 +30,20 @@
       environment:
         PATH: "/usr/local/go/bin:{{ ansible_env.PATH }}"
         GOPATH: "/etc/controller"
-      vars:
-        controller_base_path: /etc/controller
       tags:
         - controller
         - offline
+
+    - role: geerlingguy.nginx
+      tags:
+        - editor
+        - nginx
+
+    - role: geerlingguy.nodejs
+      tags:
+        - editor
+        - nodejs
+
+    - role: editor
+      tags:
+        - editor

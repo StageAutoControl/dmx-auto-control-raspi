@@ -8,4 +8,4 @@ Alias=controller.service
 
 [Service]
 Type=simple
-ExecStart=/etc/controller/bin/controller api
+ExecStart=/etc/controller/bin/controller server -s /var/controller/storage
