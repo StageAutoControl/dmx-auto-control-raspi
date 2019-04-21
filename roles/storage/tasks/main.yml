@@ -1,4 +1,5 @@
-- git:
+- name: Update storage repo
+  git:
     repo: https://{{ storage_package }}.git
     dest: "{{ storage_path | dirname }}"
   tags:
