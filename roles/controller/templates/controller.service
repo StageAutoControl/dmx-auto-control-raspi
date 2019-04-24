@@ -7,5 +7,6 @@ WantedBy=multi-user.target
 Alias=controller.service
 
 [Service]
+Restart=always
 Type=simple
 ExecStart={{ controller_base_path }}/bin/controller server -s {{ storage_path }}
