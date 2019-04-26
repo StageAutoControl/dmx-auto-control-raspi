@@ -4,3 +4,6 @@
     dest: "{{ storage_path | dirname }}"
   tags:
     - storage
+
+# - name: Set git credential store
+#   shell: git config --global credential.helper 'store --file ~/.my-credentials'

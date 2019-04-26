@@ -75,7 +75,7 @@
   template:
     src: controller.service
     dest: /etc/systemd/system/controller.service
-  when: controller_git.changed
+  register: controller_systemd.changed
   notify: controller_restart
   tags:
     - controller

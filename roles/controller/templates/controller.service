@@ -7,6 +7,8 @@ WantedBy=multi-user.target
 Alias=controller.service
 
 [Service]
+After=network-online.target
+Wants=network-online.target
 Restart=always
 Type=simple
 ExecStart={{ controller_base_path }}/bin/controller server -s {{ storage_path }}

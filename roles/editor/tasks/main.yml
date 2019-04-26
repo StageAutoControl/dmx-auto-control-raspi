@@ -6,7 +6,11 @@
   - build
   - copy
 
-# Example checkout a github repo and use refspec to fetch all pull requests
+- name: Clean git repo
+  command: git clean -fd
+  args:
+    chdir: "{{ editor_src_path }}"
+
 - git:
     repo: https://{{ editor_package }}.git
     dest: "{{ editor_src_path }}"
