@@ -10,5 +10,6 @@ Alias=controller.service
 After=network-online.target
 Wants=network-online.target
 Restart=always
+RestartSec=10
 Type=simple
 ExecStart={{ controller_base_path }}/bin/controller server -s {{ storage_path }}
